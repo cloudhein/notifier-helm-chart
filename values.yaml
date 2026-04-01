@@ -1,0 +1,94 @@
+replicaCount: 1
+
+image:
+  repository: mrnanda/notifier
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  ports:
+    http:
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+containerPort:
+  http: 8080
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+  limits:
+    memory: "128Mi"
+    cpu: "200m"
+
+readinessProbe:
+  httpGet:
+    path: /v1/healthcheck
+    port: http
+
+livenessProbe:
+  httpGet:
+    path: /v1/healthcheck
+    port: http
+
+startupProbe:
+  httpGet:
+    path: /v1/healthcheck
+    port: http
+
+# ── Plain environment variables ───────────────────────────────────────────────
+env:
+  GRPC_ADDR: "expenses-app"
+  PORT: "8080"
+
+# ── Secret environment variables ──────────────────────────────────────────────
+secrets:
+  mongo:
+    secretName: mongodb-secret
+    keys:
+      MONGO_USERNAME: user
+      MONGO_PASSWORD: password
+      MONGO_HOST: host
+      MONGO_PORT: port
+      MONGO_DATABASE: database
+  pubsub:
+    secretName: pubsub-secret
+    keys:
+      PUB_HOST: host
+      PUB_PORT: port
+  redis:
+    secretName: redis-secret
+    keys:
+      REDIS_ADDR: addr
+      REDIS_PASSWORD: password
+
+# ── Horizontal Pod Autoscaler ─────────────────────────────────────────────────
+hpa:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+  scaleDown:
+    stabilizationWindowSeconds: 300
+    policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+  scaleUp:
+    stabilizationWindowSeconds: 0
+    policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+      - type: Pods
+        value: 4
+        periodSeconds: 15
+    selectPolicy: Max
