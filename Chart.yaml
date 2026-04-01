@@ -3,4 +3,4 @@ name: notifier
 description: A Helm chart for the notifier microservice
 type: application
 version: 0.1.0
-appVersion: "mrnanda/notifier:23862634151"
+appVersion: "23863257614"
