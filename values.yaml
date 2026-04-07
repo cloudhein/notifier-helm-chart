@@ -1,5 +1,12 @@
 replicaCount: 1
 
+# Rolling update — new pod starts before old one is killed
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 0
+    maxSurge: 1
+
 image:
   repository: mrnanda/notifier
   pullPolicy: IfNotPresent
