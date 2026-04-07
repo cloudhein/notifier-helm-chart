@@ -1,3 +1,7 @@
+# -- Reloader Annotation to trigger rolling updates on ConfigMap/Secret changes
+annotations:
+  reloader.stakater.com/auto: "true"
+
 replicaCount: 1
 
 # Rolling update — new pod starts before old one is killed
