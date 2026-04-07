@@ -2,10 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "notifier.name" . }}-app
-  {{- with .Values.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
   labels:
     {{- include "notifier.labels" . | nindent 4 }}
 spec:
@@ -19,6 +15,10 @@ spec:
     {{- toYaml .Values.updateStrategy | nindent 4 }}
   template:
     metadata:
+      {{- with .Values.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- include "notifier.selectorLabels" . | nindent 8 }}
     spec:
